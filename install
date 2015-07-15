@@ -1,0 +1,32 @@
+apt-get update
+apt-get install apache2 php5 php5-common php5-gd
+apt-get install php5-sqlite curl libcurl3 libcurl3-dev php5-curl
+echo 'deb http://download.opensuse.org/repositories/isv:/ownCloud:/community/Debian_7.0/ /' >> /etc/apt/sources.list.d/owncloud.list 
+apt-get update
+apt-get install owncloud
+cd /var/www/
+chown www-data:www-data -R owncloud/
+chmod 770 -R owncloud/
+a2enmod rewrite
+a2enmod headers
+    Note : « data » est le répertoire des données d’ownCloud
+    le fichier .htaccess permet de limité l'acces au dossier data de owncloud pour cela, il faut ajouter les directives suivantes 
+    dans le fichier default du dossier site-enable de apache 
+    <Directory/>
+   Options Indexes FollowSymLinks MultiViews
+   AllowOverride ALL
+   Order allow,deny
+   allow from all
+</Directory>
+service apache2 restart
+http://IP_du_serveur/owncloud/data , doit ramener une erreur.
+http://IP_du_serveur/owncloud
+creer l'utilisateur adminstrateur avec un mot de passe , et indiquer mysql comme base de donnée.
+bien avant il faut creer la base de donnée 
+mysql -u root -p 
+mysql> CREATE USER "owncloud"@"localhost" IDENTIFIED BY "le_mot_de_passe";
+mysql> CREATE DATABASE owncloud;
+mysql> GRANT ALL PRIVILEGES ON owncloud.* TO "owncloud"@"localhost";
+mysql> FLUSH PRIVILEGES ;
+ensuite se connecter avec le compte admin pour creer d'autre comptes et des dossiers partagés.
+l'ensemble des donnees par user sont dans /var/www/owncloud/data
